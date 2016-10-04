@@ -5,7 +5,7 @@ UpdateBuildInfo is a command line utility which rewrites source files to embed b
 The examples directory contains some example source files for Golang, Python, and C#.
 
 ## Variable naming
-Build and branch variables must be named BranchId, BuildId, BranchName and BuildConfig. Casing can be all lowercase, Pascal case, or camel case. Underscores separating the tokens (ie build_id) is also acceptable.
+Build and branch variables must be named BranchId, BuildId, BranchName and BuildConfig. Casing can be all lowercase, pascal case, or camel case. Underscores separating the tokens (ie build_id) are also acceptable.
 
 ## Example command line
 ```bash
