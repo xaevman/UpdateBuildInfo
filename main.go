@@ -13,10 +13,10 @@ import (
 
 // regexp
 var (
-    regBranchId    = regexp.MustCompile("(.*\\s+[bB]ranch_?[iI]d\\s*=\\s*)(.\\d*)(.*)")
-    regBranchName  = regexp.MustCompile("(.*\\s+[bB]ranch_?[nN]ame\\s*=\\s*\")(.*)(\".*)")
-    regBuildId     = regexp.MustCompile("(.*\\s+[bB]uild_?[iI]d\\s*=\\s*)(\\d*)(.*)")
-    regBuildConfig = regexp.MustCompile("(.*\\s+[bB]uild_?[cC]onfig\\s*=\\s*\")(.*)(\".*)")
+    regBranchId    = regexp.MustCompile("(.*[bB]ranch_?[iI]d\\s*=\\s*)(.\\d*)(.*)")
+    regBranchName  = regexp.MustCompile("(.*[bB]ranch_?[nN]ame\\s*=\\s*[\"'])(.*)([\"'].*)")
+    regBuildId     = regexp.MustCompile("(.*[bB]uild_?[iI]d\\s*=\\s*)(\\d*)(.*)")
+    regBuildConfig = regexp.MustCompile("(.*[bB]uild_?[cC]onfig\\s*=\\s*[\"'])(.*)([\"'].*)")
 )
 
 // config vars
@@ -112,7 +112,7 @@ func replaceInfo(regex *regexp.Regexp, line, repl string) (bool, string) {
 
 func parseArgs() {
     flag.StringVar(&path, "path", "", "(required) Path to the source file containing build information")
-    flag.StringVar(&branch, "branch", "", "(required) The branch to label the source file with")
+    flag.StringVar(&branch, "branchName", "", "(required) The branch to label the source file with")
     flag.IntVar(&branchId, "branchId", -1, "(required) The numeric branch id to label the source file with")
     flag.StringVar(&buildConfig, "buildConfig", "Debug", "The build configuration to label the source file with")
     flag.IntVar(&buildId, "buildId", 0, "The BuildID to label the source file with")
