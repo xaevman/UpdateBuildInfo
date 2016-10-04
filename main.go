@@ -8,18 +8,15 @@ import (
     "io"
     "io/ioutil"
     "os"
-    "os/exec"
     "regexp"
-    "strings"
-
-    "github.com/xaevman/buildinfo"
 )
 
 // regexp
 var (
-    regBranchId    = regexp.MustCompile("BranchId\\s*=\\s*(.*)")
-    regBuildId     = regexp.MustCompile("BuildId\\s*=\\s*(.*)")
-    regBuildConfig = regexp.MustCompile("BuildConfig\\s*=\\s*(.*)")
+    regBranchId    = regexp.MustCompile("(.*\\s+[bB]ranch_?[iI]d\\s*=\\s*)(.\\d*)(.*)")
+    regBranchName  = regexp.MustCompile("(.*\\s+[bB]ranch_?[nN]ame\\s*=\\s*\")(.*)(\".*)")
+    regBuildId     = regexp.MustCompile("(.*\\s+[bB]uild_?[iI]d\\s*=\\s*)(\\d*)(.*)")
+    regBuildConfig = regexp.MustCompile("(.*\\s+[bB]uild_?[cC]onfig\\s*=\\s*\")(.*)(\".*)")
 )
 
 // config vars
@@ -56,46 +53,73 @@ func labelBuild() {
             panic(err)
         }
 
-        matches := regBranchId.FindStringSubmatch(line)
-        if len(matches) > 0 {
-            // rewrite branch id
-            newLine := strings.Replace(matches[0], matches[1], fmt.Sprintf("%d\n", branchId), 1)
+        replaced, newLine := replaceInfo(
+            regBranchId,
+            line,
+            fmt.Sprintf("${1}%d${3}", branchId),
+        )
+        if replaced {
             buffer.WriteString(newLine)
             continue
         }
-        matches = regBuildConfig.FindStringSubmatch(line)
-        if len(matches) > 0 {
-            // rewrite build config
-            newLine := strings.Replace(matches[0], matches[1], fmt.Sprintf("\"%s\"\n", buildConfig), 1)
+
+        replaced, newLine = replaceInfo(
+            regBranchName,
+            line,
+            fmt.Sprintf("${1}%s${3}", branch),
+        )
+        if replaced {
             buffer.WriteString(newLine)
             continue
         }
-        matches = regBuildId.FindStringSubmatch(line)
-        if len(matches) > 0 {
-            // rewrite build id
-            newLine := strings.Replace(matches[0], matches[1], fmt.Sprintf("%d\n", buildId), 1)
+
+        replaced, newLine = replaceInfo(
+            regBuildConfig,
+            line,
+            fmt.Sprintf("${1}%s${3}", buildConfig),
+        )
+        if replaced {
+            buffer.WriteString(newLine)
+            continue
+        }
+
+        replaced, newLine = replaceInfo(
+            regBuildId,
+            line,
+            fmt.Sprintf("${1}%d${3}", buildId),
+        )
+        if replaced {
             buffer.WriteString(newLine)
             continue
         }
 
         // write line as-is
-        buffer.WriteString(strings.Replace(line, "\r", "", 1))
+        buffer.WriteString(line)
     }
 
     f.Close()
 
     ioutil.WriteFile(path, buffer.Bytes(), 0660)
+}
 
-    cmd := exec.Command("go", "fmt", path)
-    cmd.Run()
+func replaceInfo(regex *regexp.Regexp, line, repl string) (bool, string) {
+    if len(regex.FindStringSubmatch(line)) < 3 {
+        return false, ""
+    }
+
+    return true, regex.ReplaceAllString(line, repl)
 }
 
 func parseArgs() {
-    flag.StringVar(&path, "path", "buildid.go", "Path to the source file containing build information")
-    flag.StringVar(&branch, "branch", "Local", "The branch to label the source file with")
+    flag.StringVar(&path, "path", "", "(required) Path to the source file containing build information")
+    flag.StringVar(&branch, "branch", "", "(required) The branch to label the source file with")
+    flag.IntVar(&branchId, "branchId", -1, "(required) The numeric branch id to label the source file with")
     flag.StringVar(&buildConfig, "buildConfig", "Debug", "The build configuration to label the source file with")
     flag.IntVar(&buildId, "buildId", 0, "The BuildID to label the source file with")
     flag.Parse()
 
-    branchId = buildinfo.GetBranch(branch)
+    if len(path) < 1 || len(branch) < 1 || branchId == -1 {
+        flag.PrintDefaults()
+        os.Exit(1)
+    }
 }
