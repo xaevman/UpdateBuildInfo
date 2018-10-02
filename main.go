@@ -13,10 +13,30 @@ import (
 
 // regexp
 var (
-    regBranchId    = regexp.MustCompile("(.*[bB]ranch_?[iI]d\\s*=\\s*)(.\\d*)(.*)")
-    regBranchName  = regexp.MustCompile("(.*[bB]ranch_?[nN]ame\\s*=\\s*[\"'])(.*)([\"'].*)")
-    regBuildId     = regexp.MustCompile("(.*[bB]uild_?[iI]d\\s*=\\s*)(\\d*)(.*)")
-    regBuildConfig = regexp.MustCompile("(.*[bB]uild_?[cC]onfig\\s*=\\s*[\"'])(.*)([\"'].*)")
+    regBranchId = []*regexp.Regexp {
+        // cs, go, py
+        regexp.MustCompile("(.*[bB]ranch_?[iI]d\\s*=\\s*)(.\\d*)(.*)"),
+        // json
+        regexp.MustCompile("(.*\"[bB]ranch_?[iI]d\"\\s*:\\s*)(.\\d*)(.*)"),
+    }
+    regBranchName = []*regexp.Regexp {
+        // cs, go, py
+        regexp.MustCompile("(.*[bB]ranch_?[nN]ame\\s*=\\s*[\"'])(.*)([\"'].*)"),
+        // json
+        regexp.MustCompile("(.*\"[bB]ranch_?[nN]ame\"\\s*:\\s*\")(.*)(\".*)"),
+    }
+    regBuildId = []*regexp.Regexp {
+        // cs, go, py
+        regexp.MustCompile("(.*[bB]uild_?[iI]d\\s*=\\s*)(\\d*)(.*)"),
+        // json
+        regexp.MustCompile("(.*\"[bB]uild_?[iI]d\"\\s*:\\s*)(\\d*)(.*)"),
+    }
+    regBuildConfig = []*regexp.Regexp {
+        // cs, go, py
+        regexp.MustCompile("(.*[bB]uild_?[cC]onfig\\s*=\\s*[\"'])(.*)([\"'].*)"),
+        // json
+        regexp.MustCompile("(.*\"[bB]uild_?[cC]onfig\"\\s*:\\s*\")(.*)(\".*)"),
+    }
 )
 
 // config vars
@@ -102,12 +122,14 @@ func labelBuild() {
     ioutil.WriteFile(path, buffer.Bytes(), 0660)
 }
 
-func replaceInfo(regex *regexp.Regexp, line, repl string) (bool, string) {
-    if len(regex.FindStringSubmatch(line)) < 3 {
-        return false, ""
+func replaceInfo(regexList []*regexp.Regexp, line, repl string) (bool, string) {
+    for _, regex := range regexList {
+        if len(regex.FindStringSubmatch(line)) == 4 {
+            return true, regex.ReplaceAllString(line, repl)
+        }
     }
 
-    return true, regex.ReplaceAllString(line, repl)
+    return false, ""
 }
 
 func parseArgs() {
