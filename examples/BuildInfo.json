@@ -1,6 +1,6 @@
 {
   "buildId": 0,
   "branchId": 0,
-  "branchName": "local",
-  "buildConfig": ""
+  "branchName": "Test",
+  "buildConfig": "TestConfig"
 }

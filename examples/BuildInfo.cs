@@ -4,7 +4,7 @@ namespace MyApp
     {
         public const int BranchId = 0;
         public const int BuildId = 0;
-        public const string BranchName = "";
-        public const string BuildConfig = "";
+        public const string BranchName = "Test";
+        public const string BuildConfig = "TestConfig";
     }
 };

@@ -15,33 +15,33 @@ import (
 var (
 	regBranchId = []*regexp.Regexp{
 		// cs, go, py
-		regexp.MustCompile("(.*[bB]ranch_?[iI]d\\s*=\\s*)(.\\d*)(.*)"),
+		regexp.MustCompile("(.*[bB][rR][aA][nN][cC][hH]_?[iI][dD]\\s*=\\s*)(.\\d*)(.*)"),
 		// json
-		regexp.MustCompile("(.*\"[bB]ranch_?[iI]d\"\\s*:\\s*)(.\\d*)(.*)"),
+		regexp.MustCompile("(.*\"[bB][rR][aA][nN][cC][hH]_?[iI][dD]\"\\s*:\\s*)(.\\d*)(.*)"),
 		// c
-		regexp.MustCompile("(#define BRANCH_ID\\s*)(.\\d*)(.*)"),
+		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_[iI][dD]\\s*)(.\\d*)(.*)"),
 	}
 	regBranchName = []*regexp.Regexp{
 		// cs, go, py
-		regexp.MustCompile("(.*[bB]ranch_?[nN]ame\\s*=\\s*[\"'])(.*)([\"'].*)"),
+		regexp.MustCompile("(.*[bB][rR][aA][nN][cC][hH]_?[nN][aA][mM][eE]\\s*=\\s*[\"'])(.*)([\"'].*)"),
 		// json
-		regexp.MustCompile("(.*\"[bB]ranch_?[nN]ame\"\\s*:\\s*\")(.*)(\".*)"),
+		regexp.MustCompile("(.*\"[bB][rR][aA][nN][cC][hH]_?[nN][aA][mM][eE]\"\\s*:\\s*\")(.*)(\".*)"),
 	}
 	regBuildId = []*regexp.Regexp{
 		// cs, go, py
-		regexp.MustCompile("(.*[bB]uild_?[iI]d\\s*=\\s*)(\\d*)(.*)"),
+		regexp.MustCompile("(.*[bB][uU][iI][lL][dD]_?[iI][dD]\\s*=\\s*)(\\d*)(.*)"),
 		// json
-		regexp.MustCompile("(.*\"[bB]uild_?[iI]d\"\\s*:\\s*)(\\d*)(.*)"),
+		regexp.MustCompile("(.*\"[bB][uU][iI][lL][dD]_?[iI][dD]\"\\s*:\\s*)(\\d*)(.*)"),
 		// c
-		regexp.MustCompile("(#define BUILD_ID\\s*)(\\d*)(.*)"),
+		regexp.MustCompile("(#define [bB][uU][iI][lL][dD]_?[iI][dD]\\s*)(\\d*)(.*)"),
 	}
 	regBuildConfig = []*regexp.Regexp{
 		// cs, go, py
-		regexp.MustCompile("(.*[bB]uild_?[cC]onfig\\s*=\\s*[\"'])(.*)([\"'].*)"),
+		regexp.MustCompile("(.*[bB][uU][iI][lL][dD]_[cC][oO][nN][fF][iI][gG]\\s*=\\s*[\"'])(.*)([\"'].*)"),
 		// json
-		regexp.MustCompile("(.*\"[bB]uild_?[cC]onfig\"\\s*:\\s*\")(.*)(\".*)"),
+		regexp.MustCompile("(.*\"[bB][uU][iI][lL][dD]_[cC][oO][nN][fF][iI][gG]\"\\s*:\\s*\")(.*)(\".*)"),
 		// c
-		regexp.MustCompile("(#define BUILD_CONFIG\\s*\")(.*)(\".*)"),
+		regexp.MustCompile("(#define [bB][uU][iI][lL][dD]_?[cC][oO][nN][fF][iI][gG]\\s*\")(.*)(\".*)"),
 	}
 )
 
