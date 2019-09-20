@@ -92,7 +92,6 @@ func labelBuild() {
 		newLine := line
 
 		if useStringBranchId {
-			fmt.Println("using string branch id")
 			replaced, newLine = replaceInfo(
 				regBranchIdStr,
 				line,
@@ -103,7 +102,6 @@ func labelBuild() {
 				continue
 			}
 		} else {
-			fmt.Println("using numeric branch id")
 			replaced, newLine = replaceInfo(
 				regBranchIdNumeric,
 				line,
@@ -172,6 +170,10 @@ func parseArgs() {
 	flag.IntVar(&buildId, "buildId", 0, "The BuildID to label the source file with")
 	flag.BoolVar(&useStringBranchId, "useStringBranchId", false, "Whether to interpret branch id as a string or number")
 	flag.Parse()
+
+	if useStringBranchId {
+		fmt.Println("Using string branch IDs")
+	}
 
 	if len(path) < 1 || len(branch) < 1 || branchId == "-1" {
 		flag.PrintDefaults()
