@@ -13,13 +13,21 @@ import (
 
 // regexp
 var (
-	regBranchId = []*regexp.Regexp{
+	regBranchIdNumeric = []*regexp.Regexp{
 		// cs, go, py
 		regexp.MustCompile("(.*[bB][rR][aA][nN][cC][hH]_?[iI][dD]\\s*=\\s*)(.\\d*)(.*)"),
 		// json
 		regexp.MustCompile("(.*\"[bB][rR][aA][nN][cC][hH]_?[iI][dD]\"\\s*:\\s*)(.\\d*)(.*)"),
 		// c
 		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_[iI][dD]\\s*)(.\\d*)(.*)"),
+	}
+	regBranchIdStr = []*regexp.Regexp{
+		// cs, go, py
+		regexp.MustCompile("(.*[bB][rR][aA][nN][cC][hH]_?[iI][dD]\\s*=\\s*[\"'])(.*)([\"'].*)"),
+		// json
+		regexp.MustCompile("(.*\"[bB][rR][aA][nN][cC][hH]_?[iI][dD]\"\\s*:\\s*\")(.*)(\".*)"),
+		// c
+		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_[iI][dD]\\s*\")(.*)(\".*)"),
 	}
 	regBranchName = []*regexp.Regexp{
 		// cs, go, py
@@ -47,11 +55,12 @@ var (
 
 // config vars
 var (
-	path        string
-	branch      string
-	branchId    int
-	buildConfig string
-	buildId     int
+	path              string
+	branch            string
+	branchId          string
+	buildConfig       string
+	buildId           int
+	useStringBranchId bool
 )
 
 func main() {
@@ -79,14 +88,31 @@ func labelBuild() {
 			panic(err)
 		}
 
-		replaced, newLine := replaceInfo(
-			regBranchId,
-			line,
-			fmt.Sprintf("${1}%d${3}", branchId),
-		)
-		if replaced {
-			buffer.WriteString(newLine)
-			continue
+		replaced := false
+		newLine := line
+
+		if useStringBranchId {
+			fmt.Println("using string branch id")
+			replaced, newLine = replaceInfo(
+				regBranchIdStr,
+				line,
+				fmt.Sprintf("${1}%s${3}", branchId),
+			)
+			if replaced {
+				buffer.WriteString(newLine)
+				continue
+			}
+		} else {
+			fmt.Println("using numeric branch id")
+			replaced, newLine = replaceInfo(
+				regBranchIdNumeric,
+				line,
+				fmt.Sprintf("${1}%s${3}", branchId),
+			)
+			if replaced {
+				buffer.WriteString(newLine)
+				continue
+			}
 		}
 
 		replaced, newLine = replaceInfo(
@@ -141,12 +167,13 @@ func replaceInfo(regexList []*regexp.Regexp, line, repl string) (bool, string) {
 func parseArgs() {
 	flag.StringVar(&path, "path", "", "(required) Path to the source file containing build information")
 	flag.StringVar(&branch, "branchName", "", "(required) The branch to label the source file with")
-	flag.IntVar(&branchId, "branchId", -1, "(required) The numeric branch id to label the source file with")
+	flag.StringVar(&branchId, "branchId", "-1", "(required) The numeric branch id to label the source file with")
 	flag.StringVar(&buildConfig, "buildConfig", "Debug", "The build configuration to label the source file with")
 	flag.IntVar(&buildId, "buildId", 0, "The BuildID to label the source file with")
+	flag.BoolVar(&useStringBranchId, "useStringBranchId", false, "Whether to interpret branch id as a string or number")
 	flag.Parse()
 
-	if len(path) < 1 || len(branch) < 1 || branchId == -1 {
+	if len(path) < 1 || len(branch) < 1 || branchId == "-1" {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
