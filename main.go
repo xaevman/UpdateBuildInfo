@@ -19,7 +19,7 @@ var (
 		// json
 		regexp.MustCompile("(.*\"[bB][rR][aA][nN][cC][hH]_?[iI][dD]\"\\s*:\\s*)(.\\d*)(.*)"),
 		// c
-		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_[iI][dD]\\s*)(.\\d*)(.*)"),
+		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_?[iI][dD]\\s*)(.\\d*)(.*)"),
 	}
 	regBranchIdStr = []*regexp.Regexp{
 		// cs, go, py
@@ -27,7 +27,7 @@ var (
 		// json
 		regexp.MustCompile("(.*\"[bB][rR][aA][nN][cC][hH]_?[iI][dD]\"\\s*:\\s*\")(.*)(\".*)"),
 		// c
-		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_[iI][dD]\\s*\")(.*)(\".*)"),
+		regexp.MustCompile("(#define [bB][rR][aA][nN][cC][hH]_?[iI][dD]\\s*\")(.*)(\".*)"),
 	}
 	regBranchName = []*regexp.Regexp{
 		// cs, go, py
@@ -45,9 +45,9 @@ var (
 	}
 	regBuildConfig = []*regexp.Regexp{
 		// cs, go, py
-		regexp.MustCompile("(.*[bB][uU][iI][lL][dD]_[cC][oO][nN][fF][iI][gG]\\s*=\\s*[\"'])(.*)([\"'].*)"),
+		regexp.MustCompile("(.*[bB][uU][iI][lL][dD]_?[cC][oO][nN][fF][iI][gG]\\s*=\\s*[\"'])(.*)([\"'].*)"),
 		// json
-		regexp.MustCompile("(.*\"[bB][uU][iI][lL][dD]_[cC][oO][nN][fF][iI][gG]\"\\s*:\\s*\")(.*)(\".*)"),
+		regexp.MustCompile("(.*\"[bB][uU][iI][lL][dD]_?[cC][oO][nN][fF][iI][gG]\"\\s*:\\s*\")(.*)(\".*)"),
 		// c
 		regexp.MustCompile("(#define [bB][uU][iI][lL][dD]_?[cC][oO][nN][fF][iI][gG]\\s*\")(.*)(\".*)"),
 	}
