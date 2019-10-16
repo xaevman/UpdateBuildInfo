@@ -3,4 +3,4 @@ language: go
 go:
  - "1.13"
 
-script: go build -v -mod=vendor
+script: go build -v
